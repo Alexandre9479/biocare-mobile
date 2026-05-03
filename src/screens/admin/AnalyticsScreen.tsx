@@ -4,23 +4,52 @@ import {
   ActivityIndicator, Dimensions
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { BarChart } from 'react-native-gifted-charts'
 import { supabase } from '../../lib/supabase'
 import { colors } from '../../theme'
 
 const W = Dimensions.get('window').width
 
-// ── Simple donut ring using Views ─────────────────────────────────────────────
-function DonutSegment({ pct, color, size = 120 }: { pct: number; color: string; size?: number }) {
-  // Approximated using a colored border arc — simple and reliable
+// ── Pure RN bar chart — zero native deps ─────────────────────────────────────
+function BarChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+  const max = Math.max(...data.map(d => d.value), 1)
+  const chartH = 140
+
   return (
-    <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center', borderWidth: size * 0.14, borderColor: color, opacity: pct > 0 ? 1 : 0.2 }} />
+    <View style={{ marginTop: 16 }}>
+      {/* Bars */}
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: chartH }}>
+        {data.map((d, i) => {
+          const pct = d.value / max
+          const barH = Math.max(pct * chartH, d.value > 0 ? 6 : 0)
+          return (
+            <View key={i} style={{ flex: 1, alignItems: 'center', height: chartH, justifyContent: 'flex-end' }}>
+              {d.value > 0 && (
+                <Text style={{ fontSize: 9, color: d.color, fontWeight: '700', marginBottom: 3 }}>
+                  {d.value}
+                </Text>
+              )}
+              <View style={{ width: '100%', height: barH, backgroundColor: d.color, borderRadius: 4, opacity: 0.9 }} />
+            </View>
+          )
+        })}
+      </View>
+      {/* X-axis line */}
+      <View style={{ height: 1, backgroundColor: colors.cardBorder, marginTop: 4 }} />
+      {/* Labels */}
+      <View style={{ flexDirection: 'row', gap: 6, marginTop: 5 }}>
+        {data.map((d, i) => (
+          <Text key={i} style={{ flex: 1, fontSize: 9, color: colors.textDim, textAlign: 'center' }} numberOfLines={1}>
+            {d.label}
+          </Text>
+        ))}
+      </View>
+    </View>
   )
 }
 
 // ── Horizontal bar ────────────────────────────────────────────────────────────
 function HBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
-  const pct = max > 0 ? Math.max((value / max) * 100, value > 0 ? 4 : 0) : 0
+  const pct = max > 0 ? Math.max((value / max) * 100, value > 0 ? 3 : 0) : 0
   return (
     <View style={hb.row}>
       <Text style={hb.label} numberOfLines={1}>{label}</Text>
@@ -32,7 +61,7 @@ function HBar({ label, value, max, color }: { label: string; value: number; max:
   )
 }
 const hb = StyleSheet.create({
-  row:   { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  row:   { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
   label: { width: 90, fontSize: 11, color: colors.textMuted },
   track: { flex: 1, height: 10, backgroundColor: '#0F172A', borderRadius: 5, overflow: 'hidden' },
   fill:  { height: '100%', borderRadius: 5 },
@@ -58,8 +87,8 @@ export default function AnalyticsScreen() {
       const allLogs    = logs ?? []
       const monthLogs  = allLogs.filter(l => l.service_date >= firstDay)
 
-      const revenue    = monthLogs.reduce((s, l) => s + (l.total_charge ?? 0), 0)
-      const freeCount  = monthLogs.filter(l => !l.total_charge).length
+      const revenue   = monthLogs.reduce((s, l) => s + (l.total_charge ?? 0), 0)
+      const freeCount = monthLogs.filter(l => !l.total_charge).length
 
       const byType = {
         cash:          equipment.filter(e => e.sale_type === 'cash').length,
@@ -67,7 +96,7 @@ export default function AnalyticsScreen() {
         hire_purchase: equipment.filter(e => e.sale_type === 'hire_purchase').length,
       }
 
-      // Monthly revenue (last 6 months)
+      // Monthly revenue — last 6 months
       const monthlyMap: Record<string, number> = {}
       allLogs.forEach(l => {
         const mon = l.service_date?.slice(0, 7)
@@ -77,40 +106,31 @@ export default function AnalyticsScreen() {
         .sort(([a], [b]) => a.localeCompare(b))
         .slice(-6)
         .map(([month, val]) => ({
+          label: month.slice(5),   // "05" short month
           value: Math.round(val / 1000),
-          label: month.slice(5),
-          frontColor: colors.purple,
+          color: colors.purple,
         }))
 
-      // Service type breakdown
+      // Service type
       const svcMap: Record<string, number> = {}
       monthLogs.forEach(l => { if (l.service_type) svcMap[l.service_type] = (svcMap[l.service_type] ?? 0) + 1 })
 
-      // Engineer performance (completed)
+      // Engineer performance
       const engMap: Record<string, number> = {}
       ;(assigns ?? []).filter(a => a.status === 'completed').forEach(a => {
         if (a.engineer_id) engMap[a.engineer_id] = (engMap[a.engineer_id] ?? 0) + 1
       })
-
       const engIds = Object.keys(engMap)
       const { data: engs } = engIds.length
         ? await supabase.from('profiles').select('id, name').in('id', engIds)
         : { data: [] }
-
       const engPerf = (engs ?? [])
         .map(e => ({ name: e.name.split(' ')[0], count: engMap[e.id] ?? 0 }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 6)
 
-      setData({
-        totalEq: equipment.length,
-        totalLogs: monthLogs.length,
-        totalAllTime: allLogs.length,
-        revenue, freeCount, byType,
-        monthlyBars: monthlyBars.length > 0 ? monthlyBars : [{ value: 0, label: 'No data', frontColor: colors.purple }],
-        svcMap,
-        engPerf,
-      })
+      setData({ totalEq: equipment.length, totalLogs: monthLogs.length, totalAllTime: allLogs.length,
+        revenue, freeCount, byType, monthlyBars, svcMap, engPerf })
     } catch (e: any) { console.error(e) }
     finally { setLoading(false); setRefreshing(false) }
   }
@@ -123,7 +143,7 @@ export default function AnalyticsScreen() {
 
   const SVC_LABELS: Record<string, string> = {
     preventive: 'Preventive', corrective: 'Corrective',
-    installation: 'Installation', calibration: 'Calibration', emergency: 'Emergency',
+    installation: 'Install', calibration: 'Calibrate', emergency: 'Emergency',
   }
 
   return (
@@ -140,13 +160,13 @@ export default function AnalyticsScreen() {
           contentContainerStyle={styles.content}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load() }} tintColor={colors.purple} />}
         >
-          {/* KPI row */}
+          {/* KPIs */}
           <View style={styles.kpiRow}>
             {[
-              { label: 'Equipment',   value: data.totalEq,      color: colors.cyan    },
-              { label: 'This Month',  value: data.totalLogs,    color: colors.purple  },
-              { label: 'All Time',    value: data.totalAllTime, color: '#8B5CF6'      },
-              { label: 'Free (month)',value: data.freeCount,    color: '#F97316'      },
+              { label: 'Equipment',    value: data.totalEq,      color: colors.cyan   },
+              { label: 'This Month',   value: data.totalLogs,    color: colors.purple },
+              { label: 'All Time',     value: data.totalAllTime, color: '#8B5CF6'     },
+              { label: 'Free (month)', value: data.freeCount,    color: '#F97316'     },
             ].map(k => (
               <View key={k.label} style={styles.kpiCard}>
                 <Text style={[styles.kpiVal, { color: k.color }]}>{k.value}</Text>
@@ -155,34 +175,35 @@ export default function AnalyticsScreen() {
             ))}
           </View>
 
-          {/* Revenue card */}
+          {/* Revenue */}
           <View style={styles.revenueCard}>
             <Text style={styles.cardTitle}>Revenue This Month</Text>
             <Text style={styles.revenueAmt}>KES {data.revenue.toLocaleString('en-KE', { minimumFractionDigits: 2 })}</Text>
-            <Text style={styles.revenueSub}>{data.totalLogs} services · {data.freeCount} free · {data.totalLogs - data.freeCount} chargeable</Text>
+            <Text style={styles.revenueSub}>
+              {data.totalLogs} services · {data.freeCount} free · {data.totalLogs - data.freeCount} chargeable
+            </Text>
           </View>
 
-          {/* Equipment by sale type — donut + legend */}
+          {/* Sale type breakdown */}
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Equipment by Sale Type</Text>
             <View style={styles.saleRow}>
               {[
-                { label: 'Cash Sale',     value: data.byType.cash,          color: '#10B981' },
-                { label: 'Placement',     value: data.byType.placement,      color: '#F97316' },
-                { label: 'Hire Purchase', value: data.byType.hire_purchase,  color: '#3B82F6' },
+                { label: 'Cash',      value: data.byType.cash,          color: '#10B981' },
+                { label: 'Placement', value: data.byType.placement,      color: '#F97316' },
+                { label: 'HP',        value: data.byType.hire_purchase,  color: '#3B82F6' },
               ].map(s => (
                 <View key={s.label} style={styles.saleItem}>
                   <Text style={[styles.saleNum, { color: s.color }]}>{s.value}</Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
                     <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: s.color }} />
-                    <Text style={styles.saleLbl}>{s.label.split(' ')[0]}</Text>
+                    <Text style={styles.saleLbl}>{s.label}</Text>
                   </View>
                   <View style={styles.saleBar}>
                     <View style={{
                       height: '100%',
-                      width: `${total > 0 ? (s.value / total) * 100 : 0}%` as any,
-                      backgroundColor: s.color,
-                      borderRadius: 3,
+                      width: `${total > 0 ? Math.round((s.value / total) * 100) : 0}%` as any,
+                      backgroundColor: s.color, borderRadius: 3,
                     }} />
                   </View>
                 </View>
@@ -193,25 +214,8 @@ export default function AnalyticsScreen() {
           {/* Monthly revenue bar chart */}
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Monthly Revenue (KES '000)</Text>
-            {data.monthlyBars[0]?.value > 0 ? (
-              <View style={{ marginTop: 12, alignItems: 'center' }}>
-                <BarChart
-                  data={data.monthlyBars}
-                  barWidth={28}
-                  spacing={16}
-                  roundedTop
-                  hideRules
-                  xAxisColor={colors.cardBorder}
-                  yAxisColor={colors.cardBorder}
-                  yAxisTextStyle={{ color: colors.textDim, fontSize: 10 }}
-                  xAxisLabelTextStyle={{ color: colors.textMuted, fontSize: 10 }}
-                  noOfSections={4}
-                  maxValue={Math.max(...data.monthlyBars.map((b: any) => b.value)) * 1.2}
-                  width={W - 80}
-                  height={160}
-                  backgroundColor={colors.card}
-                />
-              </View>
+            {data.monthlyBars.length > 0 && data.monthlyBars.some((b: any) => b.value > 0) ? (
+              <BarChart data={data.monthlyBars} />
             ) : (
               <View style={styles.noData}>
                 <Text style={styles.noDataText}>No revenue data yet</Text>
