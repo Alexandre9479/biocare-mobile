@@ -4,17 +4,17 @@
     "slug": "biocare-service-management",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/biocare-logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/biocare-logo.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0F172A"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/biocare-logo.png",
-        "backgroundColor": "#0F172A"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7B2D8B"
       },
       "package": "com.biocarehealthsystems.sms",
       "permissions": [
@@ -37,13 +37,21 @@
         {
           "photosPermission": "Biocare needs photo access to upload service images."
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-font"
     ],
     "extra": {
       "eas": {
         "projectId": "425bfd0e-801c-4e3a-a12a-f969afeedf3a"
       }
     },
-    "owner": "alex9479"
+    "owner": "alex9479",
+    "ios": {
+      "bundleIdentifier": "com.biocarehealthsystems.sms",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    }
   }
 }
