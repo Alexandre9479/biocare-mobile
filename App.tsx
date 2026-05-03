@@ -27,6 +27,8 @@ import AnalyticsScreen         from './src/screens/admin/AnalyticsScreen'
 import SettingsScreen          from './src/screens/admin/SettingsScreen'
 import MoreScreen              from './src/screens/admin/MoreScreen'
 import UsersScreen             from './src/screens/admin/UsersScreen'
+import PartsInventoryScreen    from './src/screens/admin/PartsInventoryScreen'
+import ServiceCalendarScreen   from './src/screens/admin/ServiceCalendarScreen'
 import EquipmentListScreen     from './src/screens/shared/EquipmentListScreen'
 import ServiceHistoryScreen    from './src/screens/shared/ServiceHistoryScreen'
 import NotificationsScreen     from './src/screens/shared/NotificationsScreen'
@@ -142,8 +144,12 @@ function AdminTabs({ profile, logout }: { profile: Profile; logout: () => void }
             <Stack.Screen name="Users" options={{ title: 'User Management' }}>
               {(p: any) => <UsersScreen {...p} profile={profile} />}
             </Stack.Screen>
-            <Stack.Screen name="Calendar" options={{ title: 'Service Calendar' }} component={CalendarPlaceholder} />
-            <Stack.Screen name="Parts" options={{ title: 'Parts Inventory' }} component={PartsPlaceholder} />
+            <Stack.Screen name="Calendar" options={{ title: 'Service Calendar' }}>
+              {(p: any) => <ServiceCalendarScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="Parts" options={{ title: 'Parts Inventory' }}>
+              {(p: any) => <PartsInventoryScreen {...p} profile={profile} />}
+            </Stack.Screen>
             <Stack.Screen name="ScanQR" options={{ headerShown: false }} component={QRScannerScreen} />
             <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentDetailScreen {...p} />}
@@ -238,30 +244,6 @@ function EngineerTabs({ profile, logout }: { profile: Profile; logout: () => voi
         )}
       </Tab.Screen>
     </Tab.Navigator>
-  )
-}
-
-// Simple placeholders for Calendar and Parts (full screens exist on web)
-function CalendarPlaceholder() {
-  return (
-    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
-      <Ionicons name="calendar-outline" size={60} color={colors.textDim} />
-      <Text style={{ color: colors.textMuted, fontSize: 16, marginTop: 12 }}>Service Calendar</Text>
-      <Text style={{ color: colors.textDim, fontSize: 12, marginTop: 6, textAlign: 'center', paddingHorizontal: 40 }}>
-        Use the web app for the full calendar view
-      </Text>
-    </View>
-  )
-}
-function PartsPlaceholder() {
-  return (
-    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
-      <Ionicons name="cube-outline" size={60} color={colors.textDim} />
-      <Text style={{ color: colors.textMuted, fontSize: 16, marginTop: 12 }}>Parts Inventory</Text>
-      <Text style={{ color: colors.textDim, fontSize: 12, marginTop: 6, textAlign: 'center', paddingHorizontal: 40 }}>
-        Use the web app to manage parts inventory
-      </Text>
-    </View>
   )
 }
 
