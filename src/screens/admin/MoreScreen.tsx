@@ -14,13 +14,15 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { icon: 'people-outline',        label: 'Engineers',       desc: 'View availability & workload',     color: colors.cyan,     screen: 'Engineers' },
-  { icon: 'calendar-outline',      label: 'Service Calendar',desc: 'Monthly maintenance schedule',     color: '#8B5CF6',       screen: 'Calendar' },
-  { icon: 'cube-outline',          label: 'Parts Inventory', desc: 'Track spare parts & stock',        color: '#F59E0B',       screen: 'Parts' },
-  { icon: 'bar-chart-outline',     label: 'Analytics',       desc: 'Revenue, performance & trends',    color: colors.emerald,  screen: 'Analytics' },
-  { icon: 'person-add-outline',    label: 'User Management', desc: 'Create & manage accounts',         color: '#EF4444',       screen: 'Users' },
-  { icon: 'settings-outline',      label: 'Settings',        desc: 'WhatsApp, rates & categories',     color: colors.textMuted,screen: 'Settings' },
-  { icon: 'notifications-outline', label: 'Notifications',   desc: 'View all alerts & messages',       color: '#F97316',       screen: 'Notifications' },
+  { icon: 'people-outline',        label: 'Engineers',        desc: 'View availability & workload',    color: colors.cyan,      screen: 'Engineers' },
+  { icon: 'calendar-outline',      label: 'Service Calendar', desc: 'Monthly maintenance schedule',    color: '#8B5CF6',        screen: 'Calendar' },
+  { icon: 'cube-outline',          label: 'Parts Inventory',  desc: 'Track spare parts & stock',       color: '#F59E0B',        screen: 'Parts' },
+  { icon: 'bar-chart-outline',     label: 'Analytics',        desc: 'Revenue, performance & trends',   color: colors.emerald,   screen: 'Analytics' },
+  { icon: 'cloud-upload-outline',  label: 'Import Equipment', desc: 'Import from Excel or quick-add',  color: '#3B82F6',        screen: 'ImportEquipment' },
+  { icon: 'scan-outline',          label: 'Duplicate Scanner',desc: 'Find duplicate equipment records', color: '#EF4444',        screen: 'DuplicateScanner' },
+  { icon: 'person-add-outline',    label: 'User Management',  desc: 'Create & manage accounts',        color: '#EC4899',        screen: 'Users' },
+  { icon: 'settings-outline',      label: 'Settings',         desc: 'WhatsApp, rates & categories',    color: colors.textMuted, screen: 'Settings' },
+  { icon: 'notifications-outline', label: 'Notifications',    desc: 'View all alerts & messages',      color: '#F97316',        screen: 'Notifications' },
 ]
 
 export default function MoreScreen({ navigation, profile, onLogout }: { navigation: any; profile: Profile; onLogout: () => void }) {

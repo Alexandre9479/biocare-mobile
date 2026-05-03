@@ -29,6 +29,10 @@ import MoreScreen              from './src/screens/admin/MoreScreen'
 import UsersScreen             from './src/screens/admin/UsersScreen'
 import PartsInventoryScreen    from './src/screens/admin/PartsInventoryScreen'
 import ServiceCalendarScreen   from './src/screens/admin/ServiceCalendarScreen'
+import CreateJobScreen         from './src/screens/admin/CreateJobScreen'
+import ImportEquipmentScreen   from './src/screens/admin/ImportEquipmentScreen'
+import DuplicateScannerScreen  from './src/screens/admin/DuplicateScannerScreen'
+import QRCodeScreen            from './src/screens/shared/QRCodeScreen'
 import EquipmentListScreen     from './src/screens/shared/EquipmentListScreen'
 import ServiceHistoryScreen    from './src/screens/shared/ServiceHistoryScreen'
 import NotificationsScreen     from './src/screens/shared/NotificationsScreen'
@@ -99,12 +103,28 @@ function AdminTabs({ profile, logout }: { profile: Profile; logout: () => void }
             <Stack.Screen name="EquipmentList" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentListScreen {...p} profile={profile} />}
             </Stack.Screen>
-            <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment Detail' }}>
+            <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentDetailScreen {...p} />}
             </Stack.Screen>
             <Stack.Screen name="AddEquipment" options={{ headerShown: false }}>
               {(p: any) => <AddEquipmentScreen {...p} profile={profile} />}
             </Stack.Screen>
+            <Stack.Screen name="EditEquipment" options={{ headerShown: false }}>
+              {(p: any) => <AddEquipmentScreen {...p} profile={profile} id={p.route.params?.equipmentId} />}
+            </Stack.Screen>
+            <Stack.Screen name="ImportEquipment" options={{ headerShown: false }}>
+              {(p: any) => <ImportEquipmentScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="DuplicateScanner" options={{ title: 'Duplicate Scanner' }}>
+              {(p: any) => <DuplicateScannerScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="QRCode" options={{ title: 'QR Code' }}>
+              {(p: any) => <QRCodeScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="EquipmentHistory" options={{ title: 'Service History' }}>
+              {(p: any) => <ServiceHistoryScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="LogService" component={LogServiceScreen} options={{ title: 'Log Service' }} />
           </Stack.Navigator>
         )}
       </Tab.Screen>
@@ -115,6 +135,12 @@ function AdminTabs({ profile, logout }: { profile: Profile; logout: () => void }
           <Stack.Navigator screenOptions={H}>
             <Stack.Screen name="AssignHome" options={{ title: 'Assignments' }}>
               {(p: any) => <AdminAssignmentsScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="CreateJob" options={{ headerShown: false }}>
+              {(p: any) => <CreateJobScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
+              {(p: any) => <EquipmentDetailScreen {...p} />}
             </Stack.Screen>
           </Stack.Navigator>
         )}
@@ -150,9 +176,21 @@ function AdminTabs({ profile, logout }: { profile: Profile; logout: () => void }
             <Stack.Screen name="Parts" options={{ title: 'Parts Inventory' }}>
               {(p: any) => <PartsInventoryScreen {...p} profile={profile} />}
             </Stack.Screen>
+            <Stack.Screen name="DuplicateScanner" options={{ title: 'Duplicate Scanner' }}>
+              {(p: any) => <DuplicateScannerScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="ImportEquipment" options={{ headerShown: false }}>
+              {(p: any) => <ImportEquipmentScreen {...p} profile={profile} />}
+            </Stack.Screen>
             <Stack.Screen name="ScanQR" options={{ headerShown: false }} component={QRScannerScreen} />
             <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentDetailScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="QRCode" options={{ title: 'QR Code' }}>
+              {(p: any) => <QRCodeScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="EquipmentHistory" options={{ title: 'Service History' }}>
+              {(p: any) => <ServiceHistoryScreen {...p} profile={profile} />}
             </Stack.Screen>
           </Stack.Navigator>
         )}
@@ -203,9 +241,16 @@ function EngineerTabs({ profile, logout }: { profile: Profile; logout: () => voi
             <Stack.Screen name="EquipmentList" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentListScreen {...p} profile={profile} />}
             </Stack.Screen>
-            <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment Detail' }}>
+            <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentDetailScreen {...p} />}
             </Stack.Screen>
+            <Stack.Screen name="QRCode" options={{ title: 'QR Code' }}>
+              {(p: any) => <QRCodeScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="EquipmentHistory" options={{ title: 'Service History' }}>
+              {(p: any) => <ServiceHistoryScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="LogService" component={LogServiceScreen} options={{ title: 'Log Service' }} />
           </Stack.Navigator>
         )}
       </Tab.Screen>
@@ -227,6 +272,13 @@ function EngineerTabs({ profile, logout }: { profile: Profile; logout: () => voi
             <Stack.Screen name="EquipmentDetail" options={{ title: 'Equipment' }}>
               {(p: any) => <EquipmentDetailScreen {...p} />}
             </Stack.Screen>
+            <Stack.Screen name="QRCode" options={{ title: 'QR Code' }}>
+              {(p: any) => <QRCodeScreen {...p} />}
+            </Stack.Screen>
+            <Stack.Screen name="EquipmentHistory" options={{ title: 'Service History' }}>
+              {(p: any) => <ServiceHistoryScreen {...p} profile={profile} />}
+            </Stack.Screen>
+            <Stack.Screen name="LogService" component={LogServiceScreen} options={{ title: 'Log Service' }} />
           </Stack.Navigator>
         )}
       </Tab.Screen>

@@ -9,7 +9,7 @@ import { supabase } from '../../lib/supabase'
 import { colors } from '../../theme'
 import type { Profile } from '../../types'
 
-export default function AdminAssignmentsScreen({ profile }: { profile: Profile }) {
+export default function AdminAssignmentsScreen({ profile, navigation }: { profile: Profile; navigation: any }) {
   const [jobs, setJobs]         = useState<any[]>([])
   const [engineers, setEngineers] = useState<any[]>([])
   const [loading, setLoading]   = useState(true)
@@ -172,8 +172,16 @@ export default function AdminAssignmentsScreen({ profile }: { profile: Profile }
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.container}>
-        <Text style={styles.pageTitle}>Pending Assignments</Text>
-        <Text style={styles.pageSubtitle}>{jobs.length} services need an engineer</Text>
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={styles.pageTitle}>Assignments</Text>
+            <Text style={styles.pageSubtitle}>{jobs.length} pending · need engineer</Text>
+          </View>
+          <TouchableOpacity style={styles.createBtn} onPress={() => navigation.navigate('CreateJob')}>
+            <Ionicons name="add" size={20} color="#fff" />
+            <Text style={styles.createBtnText}>Create Job</Text>
+          </TouchableOpacity>
+        </View>
 
         {loading ? (
           <ActivityIndicator color={colors.purple} size="large" style={{ marginTop: 40 }} />
@@ -264,8 +272,11 @@ export default function AdminAssignmentsScreen({ profile }: { profile: Profile }
 const styles = StyleSheet.create({
   safe:            { flex: 1, backgroundColor: colors.bg },
   container:       { flex: 1 },
-  pageTitle:       { fontSize: 22, fontWeight: '800', color: colors.text, paddingHorizontal: 16, paddingTop: 16 },
-  pageSubtitle:    { fontSize: 13, color: colors.textMuted, paddingHorizontal: 16, marginBottom: 4 },
+  titleRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4 },
+  pageTitle:       { fontSize: 22, fontWeight: '800', color: colors.text },
+  pageSubtitle:    { fontSize: 13, color: colors.textMuted, marginTop: 2 },
+  createBtn:       { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.purple, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 12 },
+  createBtnText:   { color: '#fff', fontWeight: '700', fontSize: 13 },
   card:            { backgroundColor: colors.card, borderRadius: 14, padding: 14, borderWidth: 1, borderColor: colors.cardBorder },
   facility:        { fontSize: 15, fontWeight: '700', color: colors.text },
   model:           { fontSize: 12, color: colors.textMuted, marginTop: 2 },

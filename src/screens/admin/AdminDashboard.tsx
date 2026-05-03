@@ -156,7 +156,7 @@ export default function AdminDashboard({ navigation, profile }: { navigation: an
               <>
                 <View style={styles.sectionRow}>
                   <Text style={styles.sectionTitle}>Needs Assignment</Text>
-                  <TouchableOpacity onPress={() => navigation.navigate('Assignments')}>
+                  <TouchableOpacity onPress={() => navigation.navigate('Jobs')}>
                     <Text style={styles.seeAll}>See all →</Text>
                   </TouchableOpacity>
                 </View>
@@ -164,7 +164,7 @@ export default function AdminDashboard({ navigation, profile }: { navigation: an
                   const d = days(a.equipment?.next_service_date)
                   return (
                     <TouchableOpacity key={a.id} style={styles.jobCard}
-                      onPress={() => navigation.navigate('Assignments')}>
+                      onPress={() => navigation.navigate('Jobs')}>
                       <View style={{ flex: 1 }}>
                         <Text style={styles.jobFacility} numberOfLines={1}>{a.equipment?.facility_name ?? '—'}</Text>
                         <Text style={styles.jobModel}>{a.equipment?.subcategory?.name ?? '—'}</Text>
