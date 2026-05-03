@@ -38,4 +38,5 @@ yarn-error.*
 
 # generated native folders
 /ios
-/android
+# Android folder tracked for Android Studio development
+# /android
