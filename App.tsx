@@ -26,6 +26,7 @@ import EngineersScreen         from './src/screens/admin/EngineersScreen'
 import AnalyticsScreen         from './src/screens/admin/AnalyticsScreen'
 import SettingsScreen          from './src/screens/admin/SettingsScreen'
 import MoreScreen              from './src/screens/admin/MoreScreen'
+import UsersScreen             from './src/screens/admin/UsersScreen'
 import EquipmentListScreen     from './src/screens/shared/EquipmentListScreen'
 import ServiceHistoryScreen    from './src/screens/shared/ServiceHistoryScreen'
 import NotificationsScreen     from './src/screens/shared/NotificationsScreen'
@@ -137,6 +138,9 @@ function AdminTabs({ profile, logout }: { profile: Profile; logout: () => void }
             </Stack.Screen>
             <Stack.Screen name="Profile" options={{ title: 'My Profile' }}>
               {(p: any) => <ProfileScreen {...p} profile={profile} onLogout={logout} />}
+            </Stack.Screen>
+            <Stack.Screen name="Users" options={{ title: 'User Management' }}>
+              {(p: any) => <UsersScreen {...p} profile={profile} />}
             </Stack.Screen>
             <Stack.Screen name="Calendar" options={{ title: 'Service Calendar' }} component={CalendarPlaceholder} />
             <Stack.Screen name="Parts" options={{ title: 'Parts Inventory' }} component={PartsPlaceholder} />
