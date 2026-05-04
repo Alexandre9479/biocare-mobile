@@ -1,0 +1,27 @@
+# EAS Build — exclude files not needed for cloud build
+# EAS installs node_modules fresh and runs expo prebuild itself
+
+# Dependencies (EAS runs npm install)
+node_modules/
+
+# Native folders (EAS runs expo prebuild)
+android/
+ios/
+
+# Development & IDE files
+.git/
+.idea/
+*.log
+*.local
+
+# Test & docs
+__tests__/
+coverage/
+*.md
+
+# Scripts used only locally
+scripts/
+
+# OS files
+.DS_Store
+Thumbs.db
