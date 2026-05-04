@@ -1,0 +1,52 @@
+name: EAS Build (Android APK)
+
+on:
+  # Auto-build when you push a version tag like v1.0.1, v1.1.0
+  push:
+    tags:
+      - 'v*'
+
+  # Also lets you trigger manually from GitHub website
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile (preview = APK, production = AAB)'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android APK
+        run: eas build --platform android --profile ${{ github.event.inputs.profile || 'preview' }} --non-interactive
+
+      - name: Comment download link on commit
+        if: github.event_name == 'push'
+        run: |
+          echo "✅ Build triggered for tag ${{ github.ref_name }}"
+          echo "Check https://expo.dev/accounts/alex9479/projects/biocare-service-management/builds for the download link"
